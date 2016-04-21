@@ -1,6 +1,6 @@
 # LEDWax Photon Emulator
 
-A simple emulator of a Photon server with LEDWax devices attached.  The emulator provides a mock authentication endpoint and mock device endpoints.  The device endpoints cover all devices and each device variable and function.
+A simple emulator of a Particle IoT cloud server with LEDWax Photon devices attached.  The emulator provides a mock authentication endpoint and mock device endpoints.  The device endpoints cover all devices and each device variable and function.
 
 ## Getting Started
 This is a NodeJS project.  To run the emulator you need the following:
