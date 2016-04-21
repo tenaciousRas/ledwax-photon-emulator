@@ -1,0 +1,22 @@
+{
+  "name": "ledwax-photon-emulator",
+  "version": "0.1.0",
+  "description": "emulate ledwax photon hardware",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://tbd.git"
+  },
+  "keywords": [
+    "ledwax",
+    "photon"
+  ],
+  "author": "Free Beachler",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "hapi": "^13.3.0"
+  }
+}
