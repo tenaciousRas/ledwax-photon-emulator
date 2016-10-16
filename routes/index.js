@@ -76,7 +76,7 @@ mockDevices.forEach((device) => {
 				handler : (request, reply) => {
 					let rep = {
 						"name" : device.variables[deviceVar],
-						"result" : "foo",
+						"result" : "emulator v1_device_variables route",
 						"coreInfo" : {
 							"name" : device.name,
 							"deviceID" : device.id,
@@ -93,12 +93,12 @@ mockDevices.forEach((device) => {
 			};
 			dynamicRoutes.push(newRoute);
 		}
-		// add routes for device variables
+		// add routes for device functions
 		for ( let deviceFunc in device.functions) {
 			if (device.variables.hasOwnProperty(deviceFunc)) {
 				newRoute = {
 					method : 'POST',
-					path : '/v1/devices/' + device.id + '/' + deviceVar,
+					path : '/v1/devices/' + device.id + '/' + deviceFunc,
 					handler : (request, reply) => {
 						let rep = {
 							"id" : device.id,

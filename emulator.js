@@ -48,7 +48,7 @@ server.register(Vision, (err) => {
 					    if (err) {
 					        throw err;
 					    }
-					    console.log('LEDWax Emulator Server Running at:', server.info.uri);
+					    server.log(['info', 'emulator'], 'LEDWax Emulator Server Running at: ' + server.info.uri);
 					});
 				});
 			});
