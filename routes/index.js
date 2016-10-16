@@ -1,10 +1,17 @@
 #!/usr/bin/env node
 'use strict';
 const boom = require('boom');
+const Joi = require('joi');
 
 const mocks = require('../config/mock_particle_cloud');
 let mockDeviceList = mocks.attributes.mockDeviceList,
 	mockDevices = mocks.attributes.mockDevices;
+const hardcodedOAuthToken = {
+		"access_token" : "254406f79c1999af65a7df4388971354f85cfee9",
+		"token_type" : "bearer",
+		"expires_in" : 7776000,
+		"refresh_token" : "b5b901e8760164e134199bc2c3dd1d228acf2d90"
+	};
 
 let staticRoutes = [
 		{
@@ -25,12 +32,7 @@ let staticRoutes = [
 				}
 				if (parms.username == 'user'
 						&& parms.password == 'password') {
-					rep = {
-						"access_token" : "254406f79c1999af65a7df4388971354f85cfee9",
-						"token_type" : "bearer",
-						"expires_in" : 7776000,
-						"refresh_token" : "b5b901e8760164e134199bc2c3dd1d228acf2d90"
-					};
+					rep = hardcodedOAuthToken;
 				}
 				reply(rep);
 			}
@@ -55,7 +57,7 @@ let staticRoutes = [
 				let rep = {
 					"ok" : false
 				};
-				for (mockDev in mockDeviceList) {
+				for (let mockDev in mockDeviceList) {
 					if (mockDev.id == request.params.deviceId) {
 						rep = mockDev;
 					}
@@ -68,11 +70,18 @@ let dynamicRoutes = [];
 mockDevices.forEach((device) => {
 	let newRoute = null;
 	// add routes for device variables
-	for ( let deviceVar in device.variables) {
+	for (let deviceVar in device.variables) {
 		if (device.variables.hasOwnProperty(deviceVar)) {
 			newRoute = {
 				method : 'GET',
 				path : '/v1/devices/' + device.id + '/' + deviceVar,
+				config : {
+					validate: {
+            params: {
+              auth: Joi.string().min(3).max(10).regex(/^(hardcodedOAuthToken.access_token)$/)
+            }
+					}
+        },
 				handler : (request, reply) => {
 					let rep = {
 						"name" : device.variables[deviceVar],
@@ -94,7 +103,7 @@ mockDevices.forEach((device) => {
 			dynamicRoutes.push(newRoute);
 		}
 		// add routes for device functions
-		for ( let deviceFunc in device.functions) {
+		for (let deviceFunc in device.functions) {
 			if (device.variables.hasOwnProperty(deviceFunc)) {
 				newRoute = {
 					method : 'POST',
