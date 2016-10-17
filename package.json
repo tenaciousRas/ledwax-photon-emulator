@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://tbd.git"
+    "url": "https://github.com/tenaciousRas/ledwax-photon-emulator"
   },
   "keywords": [
     "ledwax",
@@ -22,7 +22,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "hapi": "^15.1.1"
+    "hapi": "^15.1.1",
+    "joi": "^9.1.1"
   },
   "devDependencies": {
     "directory": "^0.1.0",
@@ -32,7 +33,7 @@
     "handlebars": "^4.0.5",
     "hoek": "^4.1.0",
     "inert": "^4.0.2",
-    "tv": "git+https://github.com/tenaciousRas/tv.git#migrateNode4",
+    "tv": "https://github.com/tenaciousRas/tv.git#migrateNode4",
     "vision": "^4.1.0"
   }
 }
