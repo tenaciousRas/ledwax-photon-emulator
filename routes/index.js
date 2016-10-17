@@ -5,13 +5,8 @@ const Joi = require('joi');
 
 const mocks = require('../config/mock_particle_cloud');
 let mockDeviceList = mocks.attributes.mockDeviceList,
-	mockDevices = mocks.attributes.mockDevices;
-const hardcodedOAuthToken = {
-		"access_token" : "254406f79c1999af65a7df4388971354f85cfee9",
-		"token_type" : "bearer",
-		"expires_in" : 7776000,
-		"refresh_token" : "b5b901e8760164e134199bc2c3dd1d228acf2d90"
-	};
+	mockDevices = mocks.attributes.mockDevices,
+	hardcodedOAuthToken = mocks.attributes.mockOAuthTokens;
 
 let staticRoutes = [
 		{
@@ -77,10 +72,21 @@ mockDevices.forEach((device) => {
 				path : '/v1/devices/' + device.id + '/' + deviceVar,
 				config : {
 					validate: {
-            params: {
-              auth: Joi.string().min(3).max(10).regex(/^(hardcodedOAuthToken.access_token)$/)
-            }
-					}
+            query: {
+              // auth: Joi.string().min(3).max(128).regex(new RegExp(hardcodedOAuthToken.access_token)).required()
+            },
+						headers: {
+              "host": Joi.string().optional(),
+              "accept-encoding": Joi.string().optional(),
+              "user-agent": Joi.string().optional(),
+              "connection": Joi.string().optional(),
+              "authorization": Joi.string().min(3).max(128).regex(new RegExp('.*Bearer ' + hardcodedOAuthToken.access_token)).required()
+						},
+						failAction: (request, reply, source, error) => {
+					    error.output.payload.message = 'missing auth param';
+					    return reply(boom.badData(error));
+						}
+					},
         },
 				handler : (request, reply) => {
 					let rep = {
@@ -95,7 +101,8 @@ mockDevices.forEach((device) => {
 						}
 					};
 					if (device.variables[deviceVar] == 'int32') {
-						rep.result = 46;
+						// TODO map vals or hardcode them to make sense
+						rep.result = 77;	// nonsense val
 					}
 					reply(rep);
 				}
@@ -108,6 +115,15 @@ mockDevices.forEach((device) => {
 				newRoute = {
 					method : 'POST',
 					path : '/v1/devices/' + device.id + '/' + deviceFunc,
+					config : {
+            payload: {
+              auth: Joi.string().min(3).max(128).regex(/^(hardcodedOAuthToken.access_token)$/).required()
+            },
+						failAction: (request, reply, source, error) => {
+					    error.output.payload.message = 'missing auth param';
+					    return reply(boom.badData(error));
+						}
+	        },
 					handler : (request, reply) => {
 						let rep = {
 							"id" : device.id,

@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 'use strict';
 
+const mockOAuthTokens = {
+	"access_token" : "254406f79c1999af65a7df4388971354f85cfee9",
+	"token_type" : "bearer",
+	"expires_in" : 7776000,
+	"refresh_token" : "b5b901e8760164e134199bc2c3dd1d228acf2d90"
+};
+
 const mockDeviceList = [ {
 	"id" : "330021000a47343432313031",
 	"name" : "ledwax_1",
@@ -64,6 +71,7 @@ const mockDevices = [ {
 } ];
 
 module.exports.attributes = {
+	mockOAuthTokens: mockOAuthTokens,
   mockDeviceList: mockDeviceList,
   mockDevices: mockDevices
 };
