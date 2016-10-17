@@ -72,14 +72,14 @@ mockDevices.forEach((device) => {
 				path : '/v1/devices/' + device.id + '/' + deviceVar,
 				config : {
 					validate: {
-            query: {
-              // auth: Joi.string().min(3).max(128).regex(new RegExp(hardcodedOAuthToken.access_token)).required()
-            },
 						headers: {
-              "host": Joi.string().optional(),
-              "accept-encoding": Joi.string().optional(),
-              "user-agent": Joi.string().optional(),
-              "connection": Joi.string().optional(),
+              "host": Joi.any(),
+              "accept": Joi.any(),
+              "accept-encoding": Joi.any(),
+              "user-agent": Joi.any(),
+              "connection": Joi.any(),
+              "content-type": Joi.any(),
+              "content-length": Joi.any(),
               "authorization": Joi.string().min(3).max(128).regex(new RegExp('.*Bearer ' + hardcodedOAuthToken.access_token)).required()
 						},
 						failAction: (request, reply, source, error) => {
@@ -109,34 +109,44 @@ mockDevices.forEach((device) => {
 			};
 			dynamicRoutes.push(newRoute);
 		}
-		// add routes for device functions
-		for (let deviceFunc in device.functions) {
-			if (device.variables.hasOwnProperty(deviceFunc)) {
-				newRoute = {
-					method : 'POST',
-					path : '/v1/devices/' + device.id + '/' + deviceFunc,
-					config : {
-            payload: {
-              auth: Joi.string().min(3).max(128).regex(/^(hardcodedOAuthToken.access_token)$/).required()
-            },
+	}
+	// add routes for device functions
+	for (let df in device.functions) {
+		if (device.functions.hasOwnProperty(df)) {
+			let deviceFunc = device.functions[df];
+			newRoute = {
+				method : 'POST',
+				path : '/v1/devices/' + device.id + '/' + deviceFunc,
+				config : {
+					validate: {
+						headers: {
+              "host": Joi.any(),
+              "accept": Joi.any(),
+              "accept-encoding": Joi.any(),
+              "user-agent": Joi.any(),
+              "connection": Joi.any(),
+              "content-type": Joi.any(),
+              "content-length": Joi.any(),
+              "authorization": Joi.string().min(3).max(128).regex(new RegExp('.*Bearer ' + hardcodedOAuthToken.access_token)).required()
+						},
 						failAction: (request, reply, source, error) => {
 					    error.output.payload.message = 'missing auth param';
 					    return reply(boom.badData(error));
 						}
-	        },
-					handler : (request, reply) => {
-						let rep = {
-							"id" : device.id,
-							"name" : deviceFunc,
-							"last_app" : "",
-							"connected" : device.connected,
-							"return_value" : 1
-						};
-						reply(rep);
 					}
-				};
-				dynamicRoutes.push(newRoute);
-			}
+        },
+				handler : (request, reply) => {
+					let rep = {
+						"id" : device.id,
+						"name" : deviceFunc,
+						"last_app" : "",
+						"connected" : device.connected,
+						"return_value" : 1
+					};
+					reply(rep);
+				}
+			};
+			dynamicRoutes.push(newRoute);
 		}
 	}
 });
