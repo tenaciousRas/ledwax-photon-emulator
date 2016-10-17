@@ -14,7 +14,7 @@ const server = new Hapi.Server({debug: {
 	log: ['error', 'debug', 'warn', 'info'],
 	request: ['error', 'debug', 'warn', 'info']
 }});
-server.connection({ port: PORT });
+server.connection({ port: PORT, labels : [ 'emulator' ], routes : {log : true}});
 
 const serverRoutes = require('./routes');
 
