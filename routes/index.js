@@ -8,58 +8,87 @@ let mockDeviceList = mocks.attributes.mockDeviceList,
 	mockDevices = mocks.attributes.mockDevices,
 	hardcodedOAuthToken = mocks.attributes.mockOAuthTokens;
 
+const secureEPHeaders = {
+	"host" : Joi.any(),
+	"accept" : Joi.any(),
+	"accept-encoding" : Joi.any(),
+	"user-agent" : Joi.any(),
+	"connection" : Joi.any(),
+	"content-type" : Joi.any(),
+	"content-length" : Joi.any(),
+	"authorization" : Joi.string().min(3).max(128).regex(new RegExp('.*Bearer ' + hardcodedOAuthToken.access_token)).required()
+};
+
+const secureEPConfig = {
+	validate : {
+		headers : secureEPHeaders,
+		failAction : (request, reply, source, error) => {
+			error.output.payload.message = 'missing auth param';
+			return reply(boom.badData(error));
+		}
+	}
+};
+
 let staticRoutes = [
-		{
-			method : 'GET',
-			path : '/device/{id}',
-			handler : (request, reply) => {
-				reply('Hello, ' + request.params.id + '!');
-			}
-		},
-		{
-			method : ['POST', 'GET'],
-			path : '/oauth/token',
-			handler : (request, reply) => {
-				let rep = boom.expectationFailed({});
-				let parms = request.query;
-				if (request.route.method == 'post') {
-					parms = request.payload;
+	{
+		method : 'GET',
+		path : '/device/{id}',
+		config : secureEPConfig,
+		handler : (request, reply) => {
+			// return 404 is device not found
+			for (let i = 0; i < mockDeviceList.length; i++) {
+				let mockDev = mockDeviceList[i];
+				if (mockDev.id == request.params.id) {
+					return reply('Hello, ' + request.params.id + '!');
 				}
-				if (parms.username == 'user'
-						&& parms.password == 'password') {
-					rep = hardcodedOAuthToken;
+			}
+			return reply(boom.notFound('device not found', request.params.id));
+		}
+	},
+	{
+		method : [ 'POST', 'GET' ],
+		path : '/oauth/token',
+		handler : (request, reply) => {
+			let rep = boom.expectationFailed({});
+			let parms = request.query;
+			if (request.route.method == 'post') {
+				parms = request.payload;
+			}
+			if (parms.username == 'user'
+				&& parms.password == 'password') {
+				rep = hardcodedOAuthToken;
+			}
+			return reply(rep);
+		}
+	}, {
+		method : 'DELETE',
+		path : '/v1/access_tokens/{token}',
+		config : secureEPConfig,
+		handler : (request, reply) => {
+			reply({
+				"ok" : true
+			});
+		}
+	}, {
+		method : 'GET',
+		path : '/v1/devices',
+		config : secureEPConfig,
+		handler : (request, reply) => {
+			return reply(mockDeviceList);
+		}
+	}, {
+		method : 'GET',
+		path : '/v1/devices/{deviceId}',
+		config : secureEPConfig,
+		handler : (request, reply) => {
+			for (let i = 0; i < mockDevices.length; i++) {
+				if (mockDevices[i].id == request.params.deviceId) {
+					return reply(mockDevices[i]);
 				}
-				reply(rep);
 			}
-		}, {
-			method : 'DELETE',
-			path : '/v1/access_tokens/{token}',
-			handler : (request, reply) => {
-				reply({
-					"ok" : true
-				});
-			}
-		}, {
-			method : 'GET',
-			path : '/v1/devices',
-			handler : (request, reply) => {
-				reply(mockDeviceList);
-			}
-		}, {
-			method : 'GET',
-			path : '/v1/devices/{deviceId}',
-			handler : (request, reply) => {
-				let rep = {
-					"ok" : false
-				};
-				for (let mockDev in mockDeviceList) {
-					if (mockDev.id == request.params.deviceId) {
-						rep = mockDev;
-					}
-				}
-				reply(rep);
-			}
-		} ];
+			return reply(boom.notFound('device not found', request.params.deviceId));
+		}
+	} ];
 
 let dynamicRoutes = [];
 mockDevices.forEach((device) => {
@@ -70,24 +99,7 @@ mockDevices.forEach((device) => {
 			newRoute = {
 				method : 'GET',
 				path : '/v1/devices/' + device.id + '/' + deviceVar,
-				config : {
-					validate: {
-						headers: {
-              "host": Joi.any(),
-              "accept": Joi.any(),
-              "accept-encoding": Joi.any(),
-              "user-agent": Joi.any(),
-              "connection": Joi.any(),
-              "content-type": Joi.any(),
-              "content-length": Joi.any(),
-              "authorization": Joi.string().min(3).max(128).regex(new RegExp('.*Bearer ' + hardcodedOAuthToken.access_token)).required()
-						},
-						failAction: (request, reply, source, error) => {
-					    error.output.payload.message = 'missing auth param';
-					    return reply(boom.badData(error));
-						}
-					},
-        },
+				config : secureEPConfig,
 				handler : (request, reply) => {
 					let rep = {
 						"name" : device.variables[deviceVar],
@@ -102,9 +114,9 @@ mockDevices.forEach((device) => {
 					};
 					if (device.variables[deviceVar] == 'int32') {
 						// TODO map vals or hardcode them to make sense
-						rep.result = 77;	// nonsense val
+						rep.result = 77; // nonsense val
 					}
-					reply(rep);
+					return reply(rep);
 				}
 			};
 			dynamicRoutes.push(newRoute);
@@ -117,24 +129,7 @@ mockDevices.forEach((device) => {
 			newRoute = {
 				method : 'POST',
 				path : '/v1/devices/' + device.id + '/' + deviceFunc,
-				config : {
-					validate: {
-						headers: {
-              "host": Joi.any(),
-              "accept": Joi.any(),
-              "accept-encoding": Joi.any(),
-              "user-agent": Joi.any(),
-              "connection": Joi.any(),
-              "content-type": Joi.any(),
-              "content-length": Joi.any(),
-              "authorization": Joi.string().min(3).max(128).regex(new RegExp('.*Bearer ' + hardcodedOAuthToken.access_token)).required()
-						},
-						failAction: (request, reply, source, error) => {
-					    error.output.payload.message = 'missing auth param';
-					    return reply(boom.badData(error));
-						}
-					}
-        },
+				config : secureEPConfig,
 				handler : (request, reply) => {
 					let rep = {
 						"id" : device.id,
@@ -143,7 +138,7 @@ mockDevices.forEach((device) => {
 						"connected" : device.connected,
 						"return_value" : 1
 					};
-					reply(rep);
+					return reply(rep);
 				}
 			};
 			dynamicRoutes.push(newRoute);

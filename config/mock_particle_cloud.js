@@ -36,13 +36,13 @@ const mockDeviceList = [ {
 
 const mockDevices = [ {
 	"id" : "330021000a47343432313031",
-	"name" : null,
+	"name" : "ledwax_1",
 	"connected" : true,
 	"variables" : null,
 	"functions" : null
 }, {
 	"id" : "360043000a47343432313031",
-	"name" : null,
+	"name" : "ledwax_2",
 	"connected" : true,
 	"variables" : {
 		"numStrips" : "int32",
@@ -71,7 +71,7 @@ const mockDevices = [ {
 } ];
 
 module.exports.attributes = {
-	mockOAuthTokens: mockOAuthTokens,
-  mockDeviceList: mockDeviceList,
-  mockDevices: mockDevices
+	mockOAuthTokens : mockOAuthTokens,
+	mockDeviceList : mockDeviceList,
+	mockDevices : mockDevices
 };
