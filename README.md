@@ -4,13 +4,17 @@ A simple emulator of a Particle IoT cloud server with LEDWax Photon devices atta
 
 ## Getting Started
 This is a NodeJS project.  To run the emulator you need the following:
-- clone this project
+- git
 - npm
 - NodeJS
 
 Once you have these requirements you can run the emulator with these unix commands:
-- cd ledwax-photon-emulator
-- node emulator.js
+
+```bash
+git clone https://github.com/tenaciousRas/ledwax-photon-emulator
+cd ledwax-photon-emulator
+npm start
+```
 
 ## Usage
 To verify the server is running open a browser to the following location:
