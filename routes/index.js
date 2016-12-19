@@ -6,6 +6,7 @@ const Joi = require('joi');
 const mocks = require('../config/mock_particle_cloud');
 let mockDeviceList = mocks.attributes.mockDeviceList,
 	mockDevices = mocks.attributes.mockDevices,
+	mockDeviceVarVals = mocks.attributes.mockDeviceVarVals,
 	hardcodedOAuthToken = mocks.attributes.mockOAuthTokens;
 
 const secureEPHeaders = {
@@ -92,6 +93,7 @@ let staticRoutes = [
 
 let dynamicRoutes = [];
 mockDevices.forEach((device) => {
+	device.currentStripIndex = 0;
 	let newRoute = null;
 	// add routes for device variables
 	for (let deviceVar in device.variables) {
@@ -112,9 +114,22 @@ mockDevices.forEach((device) => {
 							"last_app" : ""
 						}
 					};
-					if (device.variables[deviceVar] == 'int32') {
-						// TODO map vals or hardcode them to make sense
-						rep.result = 77; // nonsense val
+					if (deviceVar == 'stripIndex') {
+						rep.result = device.currentStripIndex;
+					} else {
+						if (typeof mockDeviceVarVals[device.id] != 'undefined') {
+							let rndIdx = Math.floor((Math.random() * (mockDeviceVarVals[device.id].length - 1)) + 0);
+							if (typeof mockDeviceVarVals[device.id][rndIdx][deviceVar] != 'undefined') {
+								rep.result = mockDeviceVarVals[device.id][rndIdx][deviceVar];
+							}
+						} else {
+							if (device.variables[deviceVar] == 'int32') {
+								rep.result = 3; // nonsense val
+							}
+							if (device.variables[deviceVar] == 'string') {
+								rep.result = 'fafafa'; // nonsense val
+							}
+						}
 					}
 					return reply(rep);
 				}
@@ -131,6 +146,10 @@ mockDevices.forEach((device) => {
 				path : '/v1/devices/' + device.id + '/' + deviceFunc,
 				config : secureEPConfig,
 				handler : (request, reply) => {
+					if (request.payload.args && request.payload.args.startsWith('idx;')) {
+						let arg = request.payload.args;
+						device.currentStripIndex = arg.split(';')[1];
+					}
 					let rep = {
 						"id" : device.id,
 						"name" : deviceFunc,

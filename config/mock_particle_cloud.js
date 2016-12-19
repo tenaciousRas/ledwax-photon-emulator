@@ -58,6 +58,23 @@ const mockDevices = [ {
 	},
 	"functions" : [ "setLEDParams", "resetAll" ]
 }, {
+	"id" : "460043000a47343432319876",
+	"name" : "ledwax_3",
+	"connected" : true,
+	"variables" : {
+		"numStrips" : "int32",
+		"stripIndex" : "int32",
+		"stripType" : "int32",
+		"dispMode" : "int32",
+		"modeColor" : "string",
+		"modeColorIdx" : "int32",
+		"brightness" : "int32",
+		"fadeMode" : "int32",
+		"fadeTime" : "int32",
+		"colorTime" : "int32"
+	},
+	"functions" : [ "setLEDParams", "resetAll" ]
+}, {
 	"id" : "0123456789abcdef01234567",
 	"name" : "gong_1",
 	"connected" : true,
@@ -70,8 +87,82 @@ const mockDevices = [ {
 	"last_heard" : "2015-07-17T22:28:40.907Z"
 } ];
 
+const mockDeviceVariableValues = {
+	"360043000a47343432313031" : [
+		{
+			"numStrips" : "3",
+			"stripType" : "0",
+			"dispMode" : "0",
+			"modeColor" : "fa3452",
+			"modeColorIdx" : "0",
+			"brightness" : "255",
+			"fadeMode" : "0",
+			"fadeTime" : "5000",
+			"colorTime" : "5000"
+		},
+		{
+			"numStrips" : "3",
+			"stripType" : "1",
+			"dispMode" : "1",
+			"modeColor" : "fa3452",
+			"modeColorIdx" : "0",
+			"brightness" : "254",
+			"fadeMode" : "0",
+			"fadeTime" : "5000",
+			"colorTime" : "5000"
+		},
+		{
+			"numStrips" : "3",
+			"stripType" : "2",
+			"dispMode" : "2",
+			"modeColor" : "fa3452",
+			"modeColorIdx" : "0",
+			"brightness" : "253",
+			"fadeMode" : "0",
+			"fadeTime" : "5000",
+			"colorTime" : "5000"
+		}
+	],
+	"460043000a47343432319876" : [
+		{
+			"numStrips" : "3",
+			"stripType" : "0",
+			"dispMode" : "0",
+			"modeColor" : "fa3452",
+			"modeColorIdx" : "0",
+			"brightness" : "255",
+			"fadeMode" : "0",
+			"fadeTime" : "5000",
+			"colorTime" : "5000"
+		},
+		{
+			"numStrips" : "3",
+			"stripType" : "1",
+			"dispMode" : "1",
+			"modeColor" : "fa3452",
+			"modeColorIdx" : "0",
+			"brightness" : "254",
+			"fadeMode" : "0",
+			"fadeTime" : "5000",
+			"colorTime" : "5000"
+		},
+		{
+			"numStrips" : "3",
+			"stripType" : "2",
+			"dispMode" : "2",
+			"modeColor" : "fa3452",
+			"modeColorIdx" : "0",
+			"brightness" : "253",
+			"fadeMode" : "0",
+			"fadeTime" : "5000",
+			"colorTime" : "5000"
+		}
+	]
+};
+
 module.exports.attributes = {
 	mockOAuthTokens : mockOAuthTokens,
 	mockDeviceList : mockDeviceList,
-	mockDevices : mockDevices
+	mockDevices : mockDevices,
+	mockDeviceVarVals : mockDeviceVariableValues
 };
