@@ -25,6 +25,14 @@ const mockDeviceList = [ {
 	"product_id" : 6,
 	"connected" : true
 }, {
+	"id" : "460043000a47343432319876",
+	"name" : "ledwax_3",
+	"last_app" : null,
+	"last_ip_address" : "10.0.0.2",
+	"last_heard" : "2015-2-16T21:13:42.643Z",
+	"product_id" : 2,
+	"connected" : true
+}, {
 	"id" : "0123456789abcdef01234567",
 	"name" : "gong_1",
 	"last_app" : null,
